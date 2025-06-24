@@ -1,1 +1,1 @@
-export type imageButtonProps = { src: string; alt: string; onClick?: () => void };
+export type imageButtonProps = { src: string; alt: string;className?: string; onClick?: () => void };
