@@ -10,10 +10,10 @@ export function Todo() {
           <h2 className="font-medium text-2xl" id="title">
             workout
           </h2>
-          <h6 className="text-xs opacity-75">for 3 hours</h6>
+          <h6 className="text-xs font-medium opacity-50">for 3 hours</h6>
         </span>
         <div className="flex gap-4 translate-x-[-1rem]">
-          <BorderSquareButton url="X" />
+          <BorderSquareButton src="/edit.svg" alt="edit" />
           <Button text="done" />
         </div>
       </div>

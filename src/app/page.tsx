@@ -25,8 +25,8 @@ export default function Home() {
         <div className="flex justify-between w-full">
           <h3 className="font-medium text-3xl">Tasks:</h3>
           <span className="flex justify-between gap-4">
-            <SquareButton url="C" />
-            <SquareButton url="S" />
+            <SquareButton  src="/time.svg" alt="show time"/>
+            <SquareButton  src="/sort.svg" alt="sort"/>
           </span>
         </div>
       </div>
