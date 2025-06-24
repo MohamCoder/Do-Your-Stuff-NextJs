@@ -1,5 +1,5 @@
-import { Button } from "@/components/txt/Button";
-import { SquareButton } from "@/components/img/SquareButton";
+import { SquareButton } from "@/components/Buttons/img/SquareButton";
+import { Button } from "@/components/Buttons/txt/Button";
 import { Todo } from "@/components/Todo";
 
 export default function Home() {

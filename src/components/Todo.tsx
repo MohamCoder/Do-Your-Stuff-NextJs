@@ -1,5 +1,5 @@
-import { BorderSquareButton } from "./img/BorderSquareButton";
-import { Button } from "./txt/Button";
+import { BorderSquareButton } from "./Buttons/img/BorderSquareButton";
+import { Button } from "./Buttons/txt/Button";
 
 export function Todo() {
   return (
