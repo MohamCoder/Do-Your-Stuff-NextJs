@@ -12,7 +12,7 @@ export function Todo() {
           </h2>
           <h6 className="text-xs opacity-75">for 3 hours</h6>
         </span>
-        <div className="flex gap-4">
+        <div className="flex gap-4 translate-x-[-1rem]">
           <BorderSquareButton url="X" />
           <Button text="done" />
         </div>
