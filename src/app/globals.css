@@ -24,6 +24,9 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+input {
+  @apply w-12 h-12 border-2 border-black bg-white rounded-xl flex items-center justify-center select-none text-center placeholder:font-semibold font-semibold;
+}
 
 @custom-variant dark (&:is(.dark *));
 

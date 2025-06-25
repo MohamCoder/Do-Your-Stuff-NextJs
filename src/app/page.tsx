@@ -3,15 +3,29 @@ import { SquareButton } from "@/components/Buttons/img/SquareButton";
 import { BorderSquareButton } from "@/components/Buttons/img/BorderSquareButton";
 import { Button } from "@/components/Buttons/txt/Button";
 import { Todo } from "@/components/Todo";
-import { PopupModal } from "@/components/PopupModal";
-import { useState } from "react";
+import { Popup } from "@/components/Popup";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isAsending, setIsAsending] = useState(false);
+  const [isAscending, setIsAscending] = useState(false);
   const [isTimeLeft, setIsTimeLeft] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [tasks, setTasks] = useState<{ title: string; deadline: Date ,id: number}[]>([]);
+  let lastId = 0;
+  useEffect(() => {
+    console.log(tasks);
+  }, [tasks, isAscending, isTimeLeft, showModal]);
 
   return (
     <>
+      {showModal && (
+        <Popup
+          onClose={() => setShowModal(false)}
+          onSubmit={(title: string, deadline: Date) =>
+            setTasks([...tasks, { title: title, deadline: deadline ,id: lastId++}])
+          }
+        />
+      )}
       <nav className="my-8 mx-32">
         <div className="flex justify-between items-center w-full gap-4">
           <span className="font-black text-black text-4xl">
@@ -20,7 +34,7 @@ export default function Home() {
             stuff
           </span>
 
-          <Button text="Add" />
+          <Button text="Add" onClick={() => setShowModal(true)} />
         </div>
       </nav>
 
@@ -33,7 +47,7 @@ export default function Home() {
             <SquareButton
               src="/time.svg"
               alt="time left"
-              className={isTimeLeft? "hidden" : ""}
+              className={isTimeLeft ? "hidden" : ""}
               onClick={() => setIsTimeLeft(!isTimeLeft)}
             />
             <BorderSquareButton
@@ -45,15 +59,15 @@ export default function Home() {
 
             <SquareButton
               src="/sort.svg"
-              alt="Asending Order"
-              className={isAsending ? "hidden" : ""}
-              onClick={() => setIsAsending(!isAsending)}
+              alt="Ascending Order"
+              className={isAscending ? "hidden" : ""}
+              onClick={() => setIsAscending(!isAscending)}
             />
             <BorderSquareButton
               src="/sort.svg"
               alt="Descending Order"
-              className={!isAsending ? "hidden" : ""}
-              onClick={() => setIsAsending(!isAsending)}
+              className={!isAscending ? "hidden" : ""}
+              onClick={() => setIsAscending(!isAscending)}
             />
           </span>
         </div>
@@ -62,12 +76,9 @@ export default function Home() {
       <hr className="mx-64" />
 
       <div id="tasks" className="mx-64 my-8">
-        <ul>
-          <li>
-            <Todo />
-          </li>
-        </ul>
-          <PopupModal />
+        {tasks.map((task, index) => (
+          <Todo key={index} task={task} isTimeLeft={isTimeLeft}/>
+        ))}
       </div>
     </>
   );
