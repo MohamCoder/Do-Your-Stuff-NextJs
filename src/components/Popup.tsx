@@ -1,8 +1,9 @@
 "use client";
-import { BorderSquareButton } from "./Buttons/img/BorderSquareButton";
 import { Button } from "./Buttons/txt/Button";
 import { Selector } from "./InfoElements/Selector";
 import { useState } from "react";
+import { Task } from "./types";
+import { BorderSquareButton } from "./Buttons/img/BorderSquareButton";
 
 function sanitizeInput(min: number, max: number, target: HTMLInputElement) {
   const value = target.value;
@@ -20,35 +21,52 @@ function sanitizeInput(min: number, max: number, target: HTMLInputElement) {
 }
 
 function convertDeadlineToDate(deadline: number[]) {
-  const hour = deadline[0]
-  const minute = deadline[1]
-  const amPm = deadline[2]
+  const hour = deadline[0];
+  const minute = deadline[1];
+  const amPm = deadline[2];
 
-  const isPM = amPm === 1
-  const date = new Date()
-  const todoHours = isPM ? hour + 12 : hour
-  const tododMinutes = minute
+  const isPM = amPm === 1;
+  const date = new Date();
+  const todoHours = isPM ? hour + 12 : hour;
+  const tododMinutes = minute;
 
-  if (date.getHours() > todoHours ||
-     (date.getHours() === todoHours && date.getMinutes() > tododMinutes)){
-    date.setDate(date.getDate() + 1)
+  if (
+    date.getHours() > todoHours ||
+    (date.getHours() === todoHours && date.getMinutes() > tododMinutes)
+  ) {
+    date.setDate(date.getDate() + 1);
   }
 
-  date.setHours(todoHours)
-  date.setMinutes(tododMinutes)
-  date.setSeconds(0)
-  date.setMilliseconds(0)
+  date.setHours(todoHours);
+  date.setMinutes(tododMinutes);
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
-  return date
+  return date;
+}
+
+function convertDateToDeadline(date: Date) {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const amPm = hours >= 12 ? 1 : 0;
+  if (hours > 12) {
+    return [hours - 12, minutes, amPm];
+  }
+  return [hours, minutes, amPm];
 }
 
 export function Popup(props: {
-  onSubmit: (task: string, deadline: Date) => void;
+  task?: Task;
+  onSubmit: (title: string, deadline: Date) => void;
   onClose: () => void;
   className?: string;
 }) {
-  const [task, setTask] = useState<string>("");
-  const [deadline, setDeadline] = useState<number[]>([0, 0, 0]);
+  const [title, setTitle] = useState<string>(
+    props.task ? props.task.title : "",
+  );
+  const [deadline, setDeadline] = useState<number[]>(
+    props.task ? convertDateToDeadline(props.task.deadline) : [0, 0, 0],
+  );
   return (
     <div className={props.className}>
       {/* background */}
@@ -73,7 +91,8 @@ export function Popup(props: {
           <textarea
             className="w-full h-24 border-2 border-black-15 rounded-xl mt-4 font-semibold text-lg p-2"
             placeholder="like :code for one hour"
-            onChange={(e) => setTask(e.target.value)}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           ></textarea>
           <div className="font-semibold text-black text-2xl mt-4">
             deadline:
@@ -81,6 +100,7 @@ export function Popup(props: {
           <div className="flex space-x-4 mt-4 w-full justify-center">
             <input
               placeholder="12"
+              value={deadline[0]}
               onChange={(e) =>
                 setDeadline([
                   sanitizeInput(0, 12, e.target),
@@ -91,6 +111,7 @@ export function Popup(props: {
             />
             <input
               placeholder="00"
+              value={deadline[1]}
               onChange={(e) =>
                 setDeadline([
                   deadline[0],
@@ -101,6 +122,7 @@ export function Popup(props: {
             />
             <Selector
               options={["AM", "PM"]}
+              selected={deadline[2] === 0 ? "AM" : "PM"}
               onChange={(e) =>
                 setDeadline([
                   deadline[0],
@@ -117,7 +139,7 @@ export function Popup(props: {
             <Button
               text="add"
               onClick={() => {
-                props.onSubmit(task, convertDeadlineToDate(deadline));
+                props.onSubmit(title, convertDeadlineToDate(deadline));
                 props.onClose();
               }}
             />

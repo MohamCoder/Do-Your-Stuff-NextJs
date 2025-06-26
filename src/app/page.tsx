@@ -4,26 +4,31 @@ import { BorderSquareButton } from "@/components/Buttons/img/BorderSquareButton"
 import { Button } from "@/components/Buttons/txt/Button";
 import { Todo } from "@/components/Todo";
 import { Popup } from "@/components/Popup";
+import { Task } from "@/components/types";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isAscending, setIsAscending] = useState(false);
-  const [isTimeLeft, setIsTimeLeft] = useState(false);
+  const [sortMethod, setSortMethod] = useState("Ascending");
+  const [showCountdown, setShowCountdown] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [tasks, setTasks] = useState<{ title: string; deadline: Date ,id: number}[]>([]);
-  let lastId = 0;
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [lastId, setLastId] = useState(0);
   useEffect(() => {
     console.log(tasks);
-  }, [tasks, isAscending, isTimeLeft, showModal]);
+  }, [tasks, sortMethod, showCountdown, showModal]);
 
   return (
     <>
       {showModal && (
         <Popup
           onClose={() => setShowModal(false)}
-          onSubmit={(title: string, deadline: Date) =>
-            setTasks([...tasks, { title: title, deadline: deadline ,id: lastId++}])
-          }
+          onSubmit={(title: string, deadline: Date) => {
+            setTasks([
+              ...tasks,
+              { title: title, deadline: deadline, id: lastId + 1 },
+            ]);
+            setLastId(lastId + 1);
+          }}
         />
       )}
       <nav className="my-8 mx-32">
@@ -47,27 +52,27 @@ export default function Home() {
             <SquareButton
               src="/time.svg"
               alt="time left"
-              className={isTimeLeft ? "hidden" : ""}
-              onClick={() => setIsTimeLeft(!isTimeLeft)}
+              className={!showCountdown ? "hidden" : ""}
+              onClick={() => setShowCountdown(!showCountdown)}
             />
             <BorderSquareButton
               src="/time.svg"
               alt="date"
-              className={!isTimeLeft ? "hidden" : ""}
-              onClick={() => setIsTimeLeft(!isTimeLeft)}
+              className={showCountdown ? "hidden" : ""}
+              onClick={() => setShowCountdown(!showCountdown)}
             />
 
             <SquareButton
               src="/sort.svg"
               alt="Ascending Order"
-              className={isAscending ? "hidden" : ""}
-              onClick={() => setIsAscending(!isAscending)}
+              className={sortMethod === "Descending" ? "hidden" : ""}
+              onClick={() => setSortMethod("Descending")}
             />
             <BorderSquareButton
               src="/sort.svg"
               alt="Descending Order"
-              className={!isAscending ? "hidden" : ""}
-              onClick={() => setIsAscending(!isAscending)}
+              className={sortMethod === "Ascending" ? "hidden" : ""}
+              onClick={() => setSortMethod("Ascending")}
             />
           </span>
         </div>
@@ -76,8 +81,15 @@ export default function Home() {
       <hr className="mx-64" />
 
       <div id="tasks" className="mx-64 my-8">
-        {tasks.map((task, index) => (
-          <Todo key={index} task={task} isTimeLeft={isTimeLeft}/>
+        {tasks.map((task: Task, index: number) => (
+          <Todo
+            key={index}
+            task={task}
+            onTaskEnd={(task: Task) => {
+              setTasks(tasks.filter((t) => t.id !== task.id));
+            }}
+            showCountdown={showCountdown}
+          />
         ))}
       </div>
     </>
