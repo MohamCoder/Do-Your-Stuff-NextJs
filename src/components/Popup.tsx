@@ -3,7 +3,7 @@ import { Button } from "./Buttons/txt/Button";
 import { Selector } from "./InfoElements/Selector";
 import { Task } from "./types";
 import { BorderSquareButton } from "./Buttons/img/BorderSquareButton";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   convertDateToDeadline,
   convertDeadlineToDate,
