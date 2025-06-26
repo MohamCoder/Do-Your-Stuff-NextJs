@@ -20,7 +20,7 @@ export function Popup(props: {
     props.task ? props.task.title : "",
   );
   const [deadline, setDeadline] = useState(
-    props.task ? convertDateToDeadline(props.task.deadline) : [null, null, 0],
+    props.task ? convertDateToDeadline(props.task.deadline) : [-1, -1, 0],
   );
   return (
     <div className={props.className}>
@@ -55,7 +55,7 @@ export function Popup(props: {
           <div className="flex space-x-4 mt-4 w-full justify-center">
             <input
               placeholder="12"
-              value={deadline[0] === null ? "" : deadline[0] }
+              value={deadline[0] === -1 ? "" : deadline[0] }
               onChange={(e) =>
                 setDeadline([
                   sanitizeInput(0, 12, e.target),
@@ -66,7 +66,7 @@ export function Popup(props: {
             />
             <input
               placeholder="00"
-              value={deadline[1] === null ? "" : deadline[1] }
+              value={deadline[1] === -1 ? "" : deadline[1] }
               onChange={(e) =>
                 setDeadline([
                   deadline[0],
@@ -95,7 +95,7 @@ export function Popup(props: {
               text="add"
               onClick={() => {
                 if (title === "") return alert("title can't be empty");
-                if (deadline[0] === null || deadline[1] === null)
+                if (deadline[0] === -1 || deadline[1] === -1)
                   return alert("deadline can't be empty");
                 props.onSubmit(title, convertDeadlineToDate(deadline));
                 props.onClose();
