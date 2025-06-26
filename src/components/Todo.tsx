@@ -46,8 +46,11 @@ export function Todo(props: {
     } else {
       countdownRef.current!.innerHTML = String(props.task.deadline);
     }
-    return () => clearInterval(interval);
-  },[props.showCountdown,props.task,props.onTaskEnd]);
+    return () => {
+      if (interval)
+        clearInterval(interval);
+    };
+  }, [props.showCountdown, props.task, props.onTaskEnd]);
   return (
     <div>
       {showModal && (

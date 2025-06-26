@@ -1,59 +1,14 @@
 "use client";
 import { Button } from "./Buttons/txt/Button";
 import { Selector } from "./InfoElements/Selector";
-import { useState } from "react";
 import { Task } from "./types";
 import { BorderSquareButton } from "./Buttons/img/BorderSquareButton";
-
-function sanitizeInput(min: number, max: number, target: HTMLInputElement) {
-  const value = target.value;
-  if (
-    Number(value) > max ||
-    Number(value) < min ||
-    Number.isNaN(Number(value))
-  ) {
-    target.value = min.toString();
-    return min;
-  }
-  //to remove zeros from the start
-  target.value = Number(value).toString();
-  return Number(value);
-}
-
-function convertDeadlineToDate(deadline: number[]) {
-  const hour = deadline[0];
-  const minute = deadline[1];
-  const amPm = deadline[2];
-
-  const isPM = amPm === 1;
-  const date = new Date();
-  const todoHours = isPM ? hour + 12 : hour;
-  const tododMinutes = minute;
-
-  if (
-    date.getHours() > todoHours ||
-    (date.getHours() === todoHours && date.getMinutes() > tododMinutes)
-  ) {
-    date.setDate(date.getDate() + 1);
-  }
-
-  date.setHours(todoHours);
-  date.setMinutes(tododMinutes);
-  date.setSeconds(0);
-  date.setMilliseconds(0);
-
-  return date;
-}
-
-function convertDateToDeadline(date: Date) {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const amPm = hours >= 12 ? 1 : 0;
-  if (hours > 12) {
-    return [hours - 12, minutes, amPm];
-  }
-  return [hours, minutes, amPm];
-}
+import { useState, useEffect } from "react";
+import {
+  convertDateToDeadline,
+  convertDeadlineToDate,
+  sanitizeInput,
+} from "@/lib/inputManagement";
 
 export function Popup(props: {
   task?: Task;
@@ -64,8 +19,8 @@ export function Popup(props: {
   const [title, setTitle] = useState<string>(
     props.task ? props.task.title : "",
   );
-  const [deadline, setDeadline] = useState<number[]>(
-    props.task ? convertDateToDeadline(props.task.deadline) : [0, 0, 0],
+  const [deadline, setDeadline] = useState(
+    props.task ? convertDateToDeadline(props.task.deadline) : [null, null, 0],
   );
   return (
     <div className={props.className}>
@@ -100,7 +55,7 @@ export function Popup(props: {
           <div className="flex space-x-4 mt-4 w-full justify-center">
             <input
               placeholder="12"
-              value={deadline[0]}
+              value={deadline[0] === null ? "" : deadline[0] }
               onChange={(e) =>
                 setDeadline([
                   sanitizeInput(0, 12, e.target),
@@ -111,7 +66,7 @@ export function Popup(props: {
             />
             <input
               placeholder="00"
-              value={deadline[1]}
+              value={deadline[1] === null ? "" : deadline[1] }
               onChange={(e) =>
                 setDeadline([
                   deadline[0],
@@ -139,6 +94,9 @@ export function Popup(props: {
             <Button
               text="add"
               onClick={() => {
+                if (title === "") return alert("title can't be empty");
+                if (deadline[0] === null || deadline[1] === null)
+                  return alert("deadline can't be empty");
                 props.onSubmit(title, convertDeadlineToDate(deadline));
                 props.onClose();
               }}

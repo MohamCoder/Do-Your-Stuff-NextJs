@@ -14,8 +14,15 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [lastId, setLastId] = useState(0);
   useEffect(() => {
+    const clonedTasks = [...tasks];
+    clonedTasks.sort((a: Task, b: Task) =>
+      sortMethod === "Ascending"
+        ? a.deadline.getTime() - b.deadline.getTime()
+        : b.deadline.getTime() - a.deadline.getTime(),
+    );
+    setTasks(clonedTasks);
     console.log(tasks);
-  }, [tasks, sortMethod, showCountdown, showModal]);
+  }, [sortMethod]);
 
   return (
     <>
